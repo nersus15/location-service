@@ -1,6 +1,6 @@
 {
   "name": "@k15/location-service",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Library berisi service (function) untuk menentukan lokasi terkini, jarak dengan titik lokasi tertentu, menggunakan library third party lain",
   "main": "src/index.js",
   "scripts": {
@@ -33,9 +33,12 @@
     "dist"
   ],
   "keywords": [
-    "kamscode", "k15"
+    "kamscode",
+    "k15"
   ],
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Fathurrahman",
   "license": "ISC",
   "bugs": {
