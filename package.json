@@ -1,6 +1,6 @@
 {
   "name": "@k15/location-service",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Library berisi service (function) untuk menentukan lokasi terkini, jarak dengan titik lokasi tertentu, menggunakan library third party lain",
   "main": "src/index.js",
   "scripts": {
