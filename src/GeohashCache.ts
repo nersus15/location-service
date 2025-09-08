@@ -90,7 +90,7 @@ export class GeohashCache {
      * Get the city name from the cache or nominatim service
      * @param lat latitude
      * @param lon longitude
-     * @param radius radius in meters
+     * @param radius radius in meters (default 5000) for get nearby city name if still in same city
      * @returns CityResult - City detail
      */
     async getCityName(lat: number, lon: number, radius: number = 5000): Promise<CityResult> {
