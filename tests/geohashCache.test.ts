@@ -39,6 +39,30 @@ describe('GeohashCache', () => {
     expect(found).toEqual(value);
   });
 
+  test('getWithinRadius returns nearby cached value for radius 5 Km', async () => {
+    const cache = new GeohashCache({ requestDelay: 0, storageType: 'memory' });
+    const ref = { lat:40.7128, lon:-74.0060};
+    const near = { lat: 40.7129, lon:-74.0061 };
+
+    const value = { name: 'NearbyCity', fullAddress: '', details: { city: 'Nearby' }, coordinate: near };
+    cache.set(near.lat, near.lon, value, 60_000);
+
+    const found = cache.getWithinRadius(ref.lat, ref.lon, 5000);
+    expect(found).toEqual(value);
+  });
+
+  test('getWithinRadius returns new value for radius 5 Km', async () => {
+    const cache = new GeohashCache({ requestDelay: 0, storageType: 'memory' });
+    const ref = { lat:40.7128, lon:-74.0060};
+    const near = { lat: 40.7580, lon:-73.9855 };
+
+    const value = { name: 'NearbyCity', fullAddress: '', details: { city: 'Nearby' }, coordinate: near };
+    cache.set(near.lat, near.lon, value, 60_000);
+
+    const found = cache.getWithinRadius(ref.lat, ref.lon, 5000);
+    expect(found).not.toEqual(value);
+  });
+
   test('expired entries are ignored and removed', async () => {
     const cache = new GeohashCache({ requestDelay: 0, storageType: 'memory' });
     const lat = 5, lon = 6;
