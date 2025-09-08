@@ -1,5 +1,13 @@
 ## Location-Service 📍
 A lightweight, framework-agnostic geohash-based caching system for location data with built-in Nominatim API integration. Perfect for reducing API calls while providing accurate city name lookups based on coordinates.
+### 🌟 Credits
+This package uses the Nominatim API from OpenStreetMap for reverse geocoding functionality:
+
+**Powered by [nominatim.openstreemap](https://nominatim.openstreemap.org)**
+-   **Nominatim**: Open-source geocoding using OpenStreetMap data
+-   **OpenStreetMap**: The free, editable map of the world, created and maintained by volunteers
+
+Please respect OpenStreetMap's usage policy and consider contributing to their amazing project!
 
 ### Features
 🗺️ Automatic Nominatim Integration - Built-in OpenStreetMap reverse geocoding
