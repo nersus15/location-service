@@ -86,13 +86,20 @@ export class GeohashCache {
             'lon' in entry;
     }
 
-    async getCityName(lat: number, lon: number): Promise<CityResult> {
+    /**
+     * Get the city name from the cache or nominatim service
+     * @param lat latitude
+     * @param lon longitude
+     * @param radius radius in meters
+     * @returns CityResult - City detail
+     */
+    async getCityName(lat: number, lon: number, radius: number = 5000): Promise<CityResult> {
         const cached = this.get(lat, lon);
         if (cached) {
             return cached;
         }
 
-        const nearby = this.getWithinRadius(lat, lon, 5000);
+        const nearby = this.getWithinRadius(lat, lon, radius);
         if (nearby) {
             return nearby;
         }
