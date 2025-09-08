@@ -1,22 +1,75 @@
-import { CacheEntry, GeohashCacheOptions, Location } from './types';
+import { CacheEntry, GeohashCacheOptions, CityResult } from './types';
 import { GeohashUtils } from './utils';
+import { NominatimService } from './NominatimService';
 
 export class GeohashCache {
   private cache: Map<string, CacheEntry>;
   private options: Required<GeohashCacheOptions>;
   private cleanupIntervalId?: NodeJS.Timeout;
+  private nominatimService: NominatimService;
 
   constructor(options: GeohashCacheOptions = {}) {
     this.options = {
-      defaultExpiry: 30 * 60 * 1000, // 30 minutes
-      precision: 4, // ~20km precision
+      defaultExpiry: 30 * 60 * 1000,
+      precision: 4,
       maxSize: 1000,
-      cleanupInterval: 5 * 60 * 1000, // 5 minutes
+      cleanupInterval: 5 * 60 * 1000,
+      nominatimEndpoint: 'https://nominatim.openstreetmap.org/reverse',
+      requestDelay: 1000,
+      userAgent: 'geohash-cache/1.0.0',
       ...options
     };
 
     this.cache = new Map();
+    this.nominatimService = new NominatimService(
+      this.options.nominatimEndpoint,
+      this.options.requestDelay,
+      this.options.userAgent
+    );
+    
     this.startCleanup();
+  }
+
+  async getCityName(lat: number, lon: number): Promise<CityResult> {
+    // Try to get from cache first
+    const cached = this.get(lat, lon);
+    if (cached) {
+      return cached;
+    }
+
+    // Try to find nearby cached result
+    const nearby = this.getWithinRadius(lat, lon, 5000);
+    if (nearby) {
+      return nearby;
+    }
+
+    // Fetch from Nominatim
+    const cityResult = await this.nominatimService.getCityName(lat, lon);
+    
+    // Cache the result
+    this.set(lat, lon, cityResult);
+    
+    return cityResult;
+  }
+
+  async getCityNameWithFallback(lat: number, lon: number, maxDistance: number = 10000): Promise<CityResult> {
+    try {
+      return await this.getCityName(lat, lon);
+    } catch (error) {
+      // If API fails, try to get nearest cached result
+      const nearest = this.getWithinRadius(lat, lon, maxDistance);
+      if (nearest) {
+        return nearest;
+      }
+      
+      // Return fallback result
+      return {
+        name: 'Unknown location',
+        fullAddress: '',
+        details: {},
+        coordinate: { lat, lon }
+      };
+    }
   }
 
   set(lat: number, lon: number, value: any, customExpiry?: number): void {
@@ -31,9 +84,8 @@ export class GeohashCache {
       lon
     });
 
-    // Enforce max size
     if (this.cache.size > this.options.maxSize) {
-      this.cleanup(true); // Force cleanup
+      this.cleanup(true);
     }
   }
 
@@ -41,12 +93,8 @@ export class GeohashCache {
     const geohash = GeohashUtils.getGeohash(lat, lon, this.options.precision);
     const entry = this.cache.get(geohash);
 
-    if (!entry) {
-      return null;
-    }
-
-    if (Date.now() > entry.expiresAt) {
-      this.cache.delete(geohash);
+    if (!entry || Date.now() > entry.expiresAt) {
+      if (entry) this.cache.delete(geohash);
       return null;
     }
 
@@ -73,6 +121,7 @@ export class GeohashCache {
     return closestEntry?.value || null;
   }
 
+  // ... (rest of the methods remain the same as before)
   has(lat: number, lon: number): boolean {
     return this.get(lat, lon) !== null;
   }
@@ -88,10 +137,6 @@ export class GeohashCache {
 
   size(): number {
     return this.cache.size;
-  }
-
-  getAllEntries(): Map<string, CacheEntry> {
-    return new Map(this.cache);
   }
 
   private startCleanup(): void {
@@ -121,20 +166,8 @@ export class GeohashCache {
     this.clear();
   }
 
-  // Utility methods
-  calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    return GeohashUtils.calculateDistance(lat1, lon1, lat2, lon2);
-  }
-
-  getPrecision(): number {
-    return this.options.precision;
-  }
-
-  setPrecision(precision: number): void {
-    this.options.precision = precision;
-  }
-
-  setDefaultExpiry(expiry: number): void {
-    this.options.defaultExpiry = expiry;
+  // Getter for the Nominatim service for advanced configuration
+  getNominatimService(): NominatimService {
+    return this.nominatimService;
   }
 }
