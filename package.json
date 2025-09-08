@@ -1,0 +1,22 @@
+{
+  "name": "location-service",
+  "version": "1.0.0",
+  "description": "Library berisi service (function) untuk menentukan lokasi terkini, jarak dengan titik lokasi tertentu, menggunakan library third party lain",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nersus15/location-service.git"
+  },
+  "keywords": [
+    "kamscode"
+  ],
+  "author": "Fathurrahman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nersus15/location-service/issues"
+  },
+  "homepage": "https://github.com/nersus15/location-service#readme"
+}
