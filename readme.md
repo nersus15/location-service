@@ -26,18 +26,18 @@ Please respect OpenStreetMap's usage policy and consider contributing to their a
 
 ### Installation
 ```bash
-npm install location-service
+npm install @k15/locatioin-service
 ```
 or using yarn:
 
 ```bash
-yarn add location-service
+yarn add @k15/locatioin-service
 ```
 
 ### Quick Start
 #### Basic Usage
 ```javascript
-import { GeohashCache } from 'location-service';
+import { GeohashCache } from '@k15/locatioin-service';
 
 // Create cache instance
 const cache = new GeohashCache();
@@ -63,7 +63,7 @@ getCityName(51.5074, -0.1278);  // London
 #### React Example
 ```jsx
 import { useState, useEffect } from 'react';
-import { GeohashCache } from 'location-service';
+import { GeohashCache } from '@k15/locatioin-service';
 
 function CityDisplay() {
   const [city, setCity] = useState('');
@@ -100,7 +100,7 @@ function CityDisplay() {
 
 <script setup>
 import { ref } from 'vue';
-import { GeohashCache } from 'location-service';
+import { GeohashCache } from '@k15/locatioin-service';
 
 const cityName = ref('');
 const cache = ref(new GeohashCache());
@@ -186,7 +186,7 @@ const cache = new GeohashCache({ storageType: 'sessionStorage' });
 
 ### Error Handling
 ```javascript
-import { GeohashCache } from 'location-service';
+import { GeohashCache } from '@k15/locatioin-service';
 
 const cache = new GeohashCache();
 
